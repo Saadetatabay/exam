@@ -15,7 +15,7 @@ int	filter(char	*s)
     	perror("Error");
     	return 1;
 	}
-	slen = strlen(s);
+	slen = strlen(s); //./a.out abc kaç eleman onu alıyoruz
 	//saaaabcdef   abc
 	while ((size = read(0, buffer, 1024))> 0)
 	{
