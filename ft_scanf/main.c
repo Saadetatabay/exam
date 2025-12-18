@@ -63,7 +63,7 @@ int scan_int(FILE *f, va_list ap)
     if (!isdigit(control))
     {
         ungetc(control,f);
-        return (-1); // harf falan gelmiş
+        return (0); // harf falan gelmiş
     }
     while (isdigit(control))
     {
@@ -83,6 +83,7 @@ int scan_string(FILE *f, va_list ap)
     int i;
     i = 0;
     char    *c = va_arg(ap,char *);
+    match_space(f);
     int control = fgetc(f);
     if (control == EOF)
         return -1;
