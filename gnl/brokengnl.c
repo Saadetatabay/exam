@@ -2,6 +2,8 @@
 
 char *ft_strchr(char *s, int c)
 {
+	if (!s)
+		return NULL;
 	int i = 0;
 	while (s[i] != c && s[i])
 		i++;
@@ -25,10 +27,11 @@ void *ft_memcpy(void *dest, const void *src, size_t n)
 
 size_t ft_strlen(char *s)
 {
+	if (!s)
+		return (0);
 	size_t ret = 0;
-	while (*s)
+	while (s[ret])
 	{
-		s++;
 		ret++;
 	}
 	return (ret);
@@ -64,32 +67,35 @@ int str_append_str(char **s1, char *s2)
 
 void *ft_memmove(void *dest, const void *src, size_t n)
 {
-    if (dest == src || n == 0)
-        return dest;
-	else if (dest < src)
-        return ft_memcpy(dest, src, n);
-	//size_t i = ft_strlen((char *)src) - 1;
-	while (n-- > 0)
-	{
-		((char *)dest)[n] = ((char *)src)[n];
-    }
+	size_t i;
+
+	if (!dest || !src)
+		return NULL;
+	if (dest < src)
+		return ft_memcpy(dest, src, n);
+	i = n;
+	while (i--)
+		((char *)dest)[i] = ((char *)src)[i];
 	return dest;
 }
 
 char *get_next_line(int fd)
 {
+	if (fd < 0 || BUFFER_SIZE <= 0)
+    	return NULL;
 	static char b[BUFFER_SIZE + 1] = "";
 	char *ret = NULL;
 	char *tmp = ft_strchr(b, '\n'); // new line kısmı
 	while (!tmp)
 	{
-        perror("s1");
 		if (!str_append_str(&ret, b))
 			return NULL;
 		int read_ret = read(fd, b, BUFFER_SIZE); // b ye okuma yaptık
-		perror("s2");
         if (read_ret == -1)
+		{
+			free(ret);
 			return NULL;
+		}
         if (read_ret == 0)
             break;
 		b[read_ret] = 0;
