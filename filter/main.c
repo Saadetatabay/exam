@@ -1,59 +1,52 @@
-#include<stdio.h>
-#include<stdlib.h>
 #include <string.h>
+# include <stdlib.h>
+#include <stdio.h>
 #include <unistd.h>
-int	filter(char	*s)
+int main(int argc,char *argv[])
 {
-	int j;
-	int i;
-	int slen;
-	int size;
-	char *buffer;
-	buffer = malloc(1024);
-	if (!buffer) 
+	if (argc != 2 || argv[1][0] == '\0')
+		return (1);
+	int size = 0;
+	char *tmp;
+	int len = strlen(argv[1]);
+	char *text = calloc(len,sizeof(char));
+	if (!text)
 	{
-    	perror("Error");
-    	return 1;
+		perror("Error : \n");
+		return (1);
 	}
-	slen = strlen(s); //./a.out abc kaç eleman onu alıyoruz
-	//saaaabcdef   abc
-	while ((size = read(0, buffer, 1024))> 0)
+	char c;
+	while(read(0,&c,1) > 0)
 	{
-		i = 0;
-		while (i<size) 
+		tmp = realloc(text,size + 2);
+		if (!tmp)
 		{
-			j = 0;
-			while (j < slen && (i + j) < size && buffer[i+j] == s[j])
-			{
-				j++;
-			}
-			if (j == slen)
-			{
-				i = i+j;
-				while (j--)
-					write(1,"*",1);;
-			}
-			else
-			{
-				write(1,&buffer[i],1);
-				i++;
-			}
+			free(text);
+			perror("Error: \n");
+			return (1);
 		}
+		text = tmp;
+		text[size] = c;
+		text[size + 1] = '\0';
+		size ++;
 	}
-	//size = read(0, buffer, 1024);
-	if (size < 0) 
+	int j;
+	int i = 0;
+	while(i<size)
 	{
-    	perror("Error");
-    	free(buffer);
-    	return 1;
+		j = 0;
+		while(j<len && i+j<size && text[i+j] == argv[1][j])
+			j++;
+		if (j == len)
+		{
+			while(j--)
+				printf("*");
+			i = i + len -1;
+		}
+		else
+			printf("%c",text[i]);
+		i++;
 	}
-	free(buffer);
+	free(text);
 	return (0);
-}
-
-int main(int argc, char *argv[])
-{
-	if (argc == 2)
-		filter(argv[1]);
-	return(1);
 }
